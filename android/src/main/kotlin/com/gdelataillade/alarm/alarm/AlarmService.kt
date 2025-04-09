@@ -250,7 +250,7 @@ class AlarmService : Service() {
                 stopSelf()
             }
 
-            stopForeground(true)
+            stopForeground(STOP_FOREGROUND_REMOVE)
         } catch (e: IllegalStateException) {
             Log.e(TAG, "Illegal State: ${e.message}", e)
         } catch (e: Exception) {
@@ -268,7 +268,7 @@ class AlarmService : Service() {
 
         AlarmRingingLiveData.instance.update(false)
 
-        stopForeground(true)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         instance = null
 
         super.onDestroy()
