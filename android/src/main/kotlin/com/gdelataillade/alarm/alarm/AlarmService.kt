@@ -15,6 +15,7 @@ import android.content.pm.ServiceInfo
 import android.os.IBinder
 import android.os.PowerManager
 import android.os.Build
+import androidx.annotation.RequiresApi
 import com.gdelataillade.alarm.models.AlarmSettings
 import com.gdelataillade.alarm.services.AlarmRingingLiveData
 import com.gdelataillade.alarm.services.NotificationHandler
@@ -49,6 +50,7 @@ class AlarmService : Service() {
         alarmStorage = AlarmStorage(this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent == null) {
             stopSelf()
@@ -195,6 +197,7 @@ class AlarmService : Service() {
         return START_STICKY
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onTaskRemoved(rootIntent: Intent?) {
         Log.d(TAG, "App closed, stopping alarm.")
         unsaveAlarm(alarmId)
@@ -214,11 +217,13 @@ class AlarmService : Service() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun handleStopAlarmCommand(alarmId: Int) {
         if (alarmId == 0) return
         unsaveAlarm(alarmId)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun unsaveAlarm(id: Int) {
         alarmStorage?.unsaveAlarm(id)
         // Notify the plugin about the alarm being stopped.
@@ -232,6 +237,7 @@ class AlarmService : Service() {
         stopAlarm(id)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun stopAlarm(id: Int) {
         AlarmRingingLiveData.instance.update(false)
         try {
@@ -250,7 +256,7 @@ class AlarmService : Service() {
                 stopSelf()
             }
 
-            stopForeground(STOP_FOREGROUND_DETACH)
+            stopForeground(STOP_FOREGROUND_REMOVE)
         } catch (e: IllegalStateException) {
             Log.e(TAG, "Illegal State: ${e.message}", e)
         } catch (e: Exception) {
@@ -258,6 +264,7 @@ class AlarmService : Service() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onDestroy() {
         ringingAlarmIds = listOf()
 
@@ -268,7 +275,7 @@ class AlarmService : Service() {
 
         AlarmRingingLiveData.instance.update(false)
 
-        stopForeground(STOP_FOREGROUND_DETACH)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         instance = null
 
         super.onDestroy()
